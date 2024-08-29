@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .list-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #fff;
+        }
+        .nav-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .nav-menu a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 5px;
+        }
+        .nav-menu a:hover {
+            background-color: #555;
+        }
+        #pixel-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+        }
+        #avatar-section {
+            padding: 20px;
+        }
+        #avatar {
+            width: 100px;
+            height: 100px;
+            background-color: #666;
+            margin: 20px auto;
+        }
+        #click-counter {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <span class="list-icon" onclick="toggleNav()">⚙️</span>
+        <div class="nav-menu" id="nav-menu">
+            <a href="#earth">Earth</a>
+            <a href="#planets">Planets</a>
+            <a href="#fun">Fun Area</a>
+            <a href="#avatar">Avatar Creation</a>
+        </div>
+        <h1>Welcome to the Enhanced Space Website</h1>
+        <div id="visitor-counter">Visitors: 0</div>
+        <div id="click-counter">Clicks: 0</div>
+    </header>
+
+    <main>
+        <section id="earth">
+            <h2>Earth</h2>
+            <div id="earth-content">Loading Earth Information...</div>
+        </section>
+
+        <section id="planets">
+            <h2>Planets</h2>
+            <div id="planets-content">Loading Planets Information...</div>
+        </section>
+
+        <section id="fun">
+            <h2>Fun Area</h2>
+            <p>Find codes on different pages for rewards!</p>
+        </section>
+
+        <section id="avatar">
+            <h2>Avatar Creation</h2>
+            <div id="avatar-section">
+                <div id="avatar"></div>
+                <input type="text" id="avatar-name" placeholder="Enter Avatar Name">
+                <button id="save-avatar">Save Avatar</button>
+            </div>
+        </section>
+    </main>
+
+    <canvas id="pixel-canvas"></canvas>
+
+    <script>
+        function toggleNav() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.style.display = navMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function createPixelBackground() {
+            const canvas = document.getElementById('pixel-canvas');
+            const ctx = canvas.getContext('2d');
+            const pixelSize = 10;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            function drawPixels() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                for (let x = 0; x < canvas.width; x += pixelSize) {
+                    for (let y = 0; y < canvas.height; y += pixelSize) {
+                        ctx.fillRect(x, y, pixelSize, pixelSize);
+                    }
+                }
+                requestAnimationFrame(drawPixels);
+            }
+            drawPixels();
+        }
+
+        function initSolarSystemAnimation() {
+            const canvas = document.getElementById('pixel-canvas');
+            const ctx = canvas.getContext('2d');
+            const planets = [
+                { name: 'Mercury', radius: 10, color: 'gray', orbit: 50 },
+                { name: 'Venus', radius: 15, color: 'yellow', orbit: 80 },
+                { name: 'Earth', radius: 20, color: 'blue', orbit: 110 },
+                { name: 'Mars', radius: 15, color: 'red', orbit: 140 },
+                { name: 'Jupiter', radius: 30, color: 'brown', orbit: 180 },
+                { name: 'Saturn', radius: 25, color: 'gold', orbit: 220 },
+                { name: 'Uranus', radius: 20, color: 'cyan', orbit: 260 },
+                { name: 'Neptune', radius: 20, color: 'blue', orbit: 300 }
+            ];
+
+            function drawSolarSystem() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+
+                planets.forEach((planet, index) => {
+                    const angle = Date.now() / 1000 * (index + 1);
+                    const x = centerX + planet.orbit * Math.cos(angle);
+                    const y = centerY + planet.orbit * Math.sin(angle);
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, planet.radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = planet.color;
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(drawSolarSystem);
+            }
+            drawSolarSystem();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createPixelBackground();
+            initSolarSystemAnimation();
+
+            const avatarButton = document.getElementById('save-avatar');
+            avatarButton.addEventListener('click', () => {
+                const avatarName = document.getElementById('avatar-name').value;
+                alert('Avatar Saved: ' + avatarName);
+            });
+
+            let visitorCount = 0;
+            function updateVisitorCount() {
+                visitorCount++;
+                document.getElementById('visitor-counter').textContent = 'Visitors: ' + visitorCount;
+            }
+            updateVisitorCount();
+
+            document.getElementById('visitor-counter').addEventListener('mouseover', () => {
+                alert('Total visits: ' + visitorCount);
+            });
+
+            let clickCount = 0;
+            function updateClickCount() {
+                clickCount++;
+                document.getElementById('click-counter').textContent = 'Clicks: ' + clickCount;
+            }
+            document.querySelector('main').addEventListener('click', updateClickCount);
+        });
+    </script>
+</body>
+</html>
